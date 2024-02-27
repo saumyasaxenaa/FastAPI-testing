@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Response
-import models
-import schemas
-from database import Base, engine, get_db
+from . import models, schemas
+from .database import Base, engine, get_db
 from sqlalchemy.orm import Session
 
 Base.metadata.create_all(bind=engine)
@@ -9,7 +8,12 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
-@app.post('/item')
+@app.get('/')
+def read_root():
+    return 'hello world'
+
+
+@app.post('/items')
 async def create_item(item: schemas.ItemCreate, db: Session = Depends(get_db)):
     new_item = models.DBItem(**item.dict())
     db.add(new_item)
